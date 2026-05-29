@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI Design Navigator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#f5f0e8;--bg-warm:#efe8dd;
+--surface:#fffcf7;--surface-hover:#f8f3eb;
+--border:#e0d8cd;--border-hover:#d0c8bc;
+--ink:#1c1917;--ink-secondary:#44403c;
+--muted:#a8a29e;--muted-light:#d6d3d1;
+--accent:#1c1917;--accent-soft:rgba(28,25,23,0.05);
+--stone:#78716c;
+--radius:20px;--radius-lg:24px;--radius-pill:9999px;
+--shadow-xs:0 1px 2px rgba(28,25,23,0.04);
+--shadow-sm:0 1px 3px rgba(28,25,23,0.06),0 1px 2px rgba(28,25,23,0.04);
+--shadow-md:0 4px 20px rgba(28,25,23,0.06),0 1px 4px rgba(28,25,23,0.03);
+--shadow-lg:0 12px 44px rgba(28,25,23,0.07),0 4px 12px rgba(28,25,23,0.03);
+--shadow-xl:0 24px 64px rgba(28,25,23,0.09),0 8px 20px rgba(28,25,23,0.03);
+--font-display:'DM Sans',system-ui,sans-serif;
+--font-body:'Plus Jakarta Sans',system-ui,sans-serif;
+--ease-out: cubic-bezier(.16,1,.3,1);
+--ease-in-out: cubic-bezier(.65,0,.35,1);
+}
+html{scroll-behavior:smooth}
+body{
+font-family:var(--font-body);color:var(--ink);background:var(--bg);
+overflow-x:hidden;min-height:100vh;
+background:
+radial-gradient(ellipse 80% 50% at 85% 0%,rgba(210,198,180,0.35),transparent),
+radial-gradient(ellipse 60% 40% at 10% 100%,rgba(225,215,198,0.25),transparent),
+linear-gradient(180deg,#f5f0e8,#efe8dd);
+-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+letter-spacing:0.005em;
+}
+a{color:inherit;text-decoration:none}
+
+@media(prefers-reduced-motion:reduce){
+*,*::before,*::after{
+animation-duration:0.01ms!important;animation-iteration-count:1!important;
+transition-duration:0.01ms!important;
+}
+}
+
+/* ── Top Navigation ────────────────────────────────── */
+.top-nav{
+position:fixed;top:0;left:0;right:0;z-index:100;
+display:flex;align-items:center;justify-content:center;
+padding:20px 32px;
+background:linear-gradient(to bottom,rgba(245,240,232,0.97),rgba(245,240,232,0.75) 65%,transparent);
+backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
+.nav-tabs{
+position:relative;display:flex;gap:0;
+background:var(--accent-soft);border-radius:var(--radius-pill);
+padding:4px;border:1px solid rgba(28,25,23,0.04);
+}
+.nav-btn{
+position:relative;padding:10px 30px;border:none;background:none;
+color:var(--muted);font-family:var(--font-body);font-size:13px;font-weight:600;
+cursor:pointer;border-radius:var(--radius-pill);z-index:1;
+letter-spacing:0.02em;line-height:1;
+transition:color .3s var(--ease-out);
+}
+.nav-btn.active{color:var(--ink)}
+.nav-btn:not(.active):hover{color:var(--stone)}
+.nav-indicator{
+position:absolute;top:4px;left:4px;height:calc(100% - 8px);
+border-radius:var(--radius-pill);background:var(--surface);
+box-shadow:var(--shadow-sm);
+transition:transform .45s var(--ease-out),width .45s var(--ease-out);
+}
+
+/* ── Page containers ───────────────────────────────── */
+.page{display:none;opacity:0;transition:opacity .4s var(--ease-out)}
+.page.active{display:block;opacity:1}
+.page-inner{
+min-height:100vh;
+padding:calc(84px + clamp(20px,3vw,40px)) clamp(20px,3vw,40px);
+max-width:1320px;margin:0 auto;
+}
+
+/* ── Page 1: Inspiration Grid ──────────────────────── */
+.p1-header{margin-bottom:clamp(24px,4vw,48px)}
+.p1-kicker{
+font-size:11px;font-weight:600;letter-spacing:0.14em;
+text-transform:uppercase;color:var(--stone);
+margin-bottom:16px;
+}
+.p1-title{
+font-family:var(--font-display);font-weight:300;
+font-size:clamp(2.6rem,6.5vw,4.6rem);line-height:1.02;
+letter-spacing:-0.035em;color:var(--ink);
+}
+.p1-title em{font-style:italic;color:var(--stone);font-weight:300}
+.p1-subtitle{
+color:var(--muted);font-size:clamp(0.85rem,1.1vw,0.95rem);
+margin-top:16px;font-weight:400;line-height:1.65;max-width:420px;
+}
+
+.inspiration-grid{
+display:grid;
+grid-template-columns:repeat(12,1fr);
+gap:clamp(10px,1.5vw,16px);
+}
+.insp-card{
+position:relative;display:flex;flex-direction:column;justify-content:flex-end;
+border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;
+transition:transform .5s var(--ease-out),box-shadow .5s var(--ease-out);
+}
+.insp-card::after{
+content:'';position:absolute;inset:0;z-index:1;
+border-radius:var(--radius-lg);
+background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.25) 35%,rgba(0,0,0,0.04) 55%,transparent 100%);
+pointer-events:none;
+}
+.insp-card:hover{
+transform:translateY(-5px);
+box-shadow:var(--shadow-xl);
+z-index:2;
+}
+.insp-card-inner{position:absolute;inset:0;transition:transform .7s var(--ease-out)}
+.insp-card:hover .insp-card-inner{transform:scale(1.05)}
+.insp-card-content{position:relative;z-index:2;padding:clamp(16px,2vw,28px)}
+.insp-card-name{
+font-family:var(--font-display);font-weight:500;
+font-size:clamp(0.95rem,1.5vw,1.35rem);line-height:1.2;
+letter-spacing:-0.01em;
+text-shadow:0 1px 4px rgba(0,0,0,0.5),0 2px 12px rgba(0,0,0,0.3);
+}
+.insp-card-desc{
+font-size:0.75rem;color:rgba(255,255,255,0.82);margin-top:4px;
+font-weight:400;letter-spacing:0.015em;line-height:1.4;
+text-shadow:0 1px 4px rgba(0,0,0,0.4);
+}
+.insp-card-arrow{
+position:absolute;top:16px;right:16px;z-index:2;
+width:32px;height:32px;border-radius:50%;
+background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);
+display:flex;align-items:center;justify-content:center;
+opacity:0;transform:translate(-4px,4px);
+transition:opacity .3s var(--ease-out),transform .3s var(--ease-out);
+}
+.insp-card:hover .insp-card-arrow{opacity:1;transform:translate(0,0)}
+.insp-card-arrow svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2}
+
+/* Card sizes — varied, not identical */
+.card-hero{grid-column:span 7;min-height:clamp(260px,32vw,380px)}
+.card-wide{grid-column:span 5;min-height:clamp(260px,32vw,380px)}
+.card-tall{grid-column:span 4;min-height:clamp(280px,28vw,360px)}
+.card-med{grid-column:span 4;min-height:clamp(200px,20vw,260px)}
+.card-sm{grid-column:span 4;min-height:clamp(180px,16vw,220px)}
+
+@media(max-width:900px){
+.inspiration-grid{grid-template-columns:repeat(6,1fr)}
+.card-hero,.card-wide,.card-tall,.card-med,.card-sm{grid-column:span 6;min-height:220px}
+}
+@media(max-width:480px){
+.inspiration-grid{grid-template-columns:1fr}
+.card-hero,.card-wide,.card-tall,.card-med,.card-sm{grid-column:span 1;min-height:200px}
+}
+
+/* ── Page 2: Creative Funnel ───────────────────────── */
+.page2-wrap{
+overflow-y:auto;
+-ms-overflow-style:none;scrollbar-width:none;
+}
+.page2-wrap::-webkit-scrollbar{display:none}
+.screen{
+display:flex;flex-direction:column;
+padding:clamp(40px,4vw,60px) clamp(20px,3vw,40px) clamp(20px,3vw,40px);
+}
+#macroScreen{padding-bottom:clamp(20px,2vw,32px)}
+#microScreen{min-height:auto}
+.screen-header{margin-bottom:clamp(20px,3vw,36px)}
+.screen-kicker{
+font-size:10px;font-weight:600;letter-spacing:0.16em;
+text-transform:uppercase;color:var(--muted);
+margin-bottom:12px;
+}
+.screen-label{
+font-family:var(--font-display);font-weight:300;
+font-size:clamp(2rem,5vw,3.4rem);line-height:1.02;
+letter-spacing:-0.035em;color:var(--ink);
+}
+.screen-label em{font-style:italic;color:var(--stone);font-weight:300}
+.screen-label .dot{font-style:normal;opacity:0.3;margin:0 0.1em}
+
+/* ── Screen 1: Macro — compact snippet cards ───────── */
+.macro-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:clamp(12px,2vw,20px);flex:1;align-content:start;
+}
+.macro-card{
+position:relative;border-radius:var(--radius);
+overflow:hidden;cursor:pointer;
+height:clamp(140px,18vw,200px);
+transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out);
+box-shadow:var(--shadow-sm);
+}
+.macro-card:hover{
+transform:translateY(-3px);
+box-shadow:var(--shadow-lg);
+}
+
+/* Collapsed state */
+.macro-grid.collapsed{
+max-height:360px;
+overflow:hidden;
+position:relative;
+transition:max-height .5s var(--ease-out);
+}
+.macro-grid.expanded{
+max-height:2000px;
+transition:max-height .6s var(--ease-out);
+}
+.macro-expand-btn{
+display:none;width:100%;
+padding:28px 0 20px;
+text-align:center;cursor:pointer;
+border:none;background:none;
+}
+.macro-grid.collapsed ~ .macro-expand-btn,
+.macro-grid.expanded ~ .macro-expand-btn{display:block}
+.macro-expand-btn-inner{
+display:inline-flex;align-items:center;gap:8px;
+padding:12px 40px;border-radius:var(--radius-pill);
+background:var(--surface);border:1px solid var(--border);
+color:var(--ink-secondary);font-family:var(--font-body);
+font-size:13px;font-weight:600;letter-spacing:0.04em;
+box-shadow:var(--shadow-sm);
+transition:all .3s var(--ease-out);
+}
+.macro-expand-btn-inner:hover{
+background:var(--surface-hover);border-color:var(--border-hover);
+box-shadow:var(--shadow-md);transform:translateY(-1px);
+}
+.macro-expand-btn-inner svg{
+width:16px;height:16px;transition:transform .3s var(--ease-out);
+}
+.macro-grid.expanded ~ .macro-expand-btn .macro-expand-btn-inner svg{
+transform:rotate(180deg);
+}
+.macro-expand-btn .expand-text{display:inline}
+.macro-expand-btn .collapse-text{display:none}
+.macro-grid.expanded ~ .macro-expand-btn .expand-text{display:none}
+.macro-grid.expanded ~ .macro-expand-btn .collapse-text{display:inline}
+.macro-card .card-surface{
+position:absolute;inset:0;display:block;
+transition:transform .7s var(--ease-out);
+}
+.macro-card:hover .card-surface{transform:scale(1.06)}
+
+/* Copy toast */
+.copy-toast{
+position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.9);
+z-index:9999;
+padding:14px 28px;border-radius:var(--radius-pill);
+background:rgba(28,25,23,0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+color:#fff;font-family:var(--font-body);font-size:13px;font-weight:600;
+letter-spacing:0.04em;
+display:flex;align-items:center;gap:8px;
+box-shadow:0 16px 48px rgba(0,0,0,0.2);
+opacity:0;pointer-events:none;
+transition:opacity .3s var(--ease-out),transform .3s var(--ease-out);
+}
+.copy-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.copy-toast svg{width:16px;height:16px;flex-shrink:0}
+
+/* Get Code button */
+.get-code-btn{
+position:absolute;top:10px;right:10px;z-index:3;
+display:flex;align-items:center;gap:5px;
+padding:6px 12px;border-radius:var(--radius-pill);
+background:var(--surface);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+border:1px solid var(--border);
+color:var(--ink);font-family:var(--font-body);
+font-size:11px;font-weight:600;letter-spacing:0.03em;
+cursor:pointer;
+opacity:0;transform:translateY(-4px);
+transition:opacity .25s var(--ease-out),transform .25s var(--ease-out),
+background .2s var(--ease-out),border-color .2s var(--ease-out),box-shadow .2s var(--ease-out);
+}
+.macro-card:hover .get-code-btn{opacity:1;transform:translateY(0)}
+.get-code-btn:hover{background:var(--surface-hover);border-color:var(--border-hover);box-shadow:var(--shadow-sm)}
+.get-code-btn:active{transform:scale(0.95)}
+.get-code-btn svg{width:12px;height:12px;flex-shrink:0}
+.get-code-btn.copied{
+background:#f0fdf4;border-color:#86efac;color:#166534;
+pointer-events:none;
+}
+
+@media(max-width:900px){
+.macro-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:600px){
+.macro-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:400px){
+.macro-card{height:140px}
+}
+
+/* ── Screen 2: Micro — fully visible ── */
+#microScreen{opacity:1;transform:none}
+
+/* ── Screen 2: Micro — category rows ──────────────── */
+.micro-grid{
+display:flex;flex-direction:column;gap:0;flex:1;
+}
+.micro-group{
+padding:clamp(16px,2vw,24px) 0;
+border-bottom:1px solid rgba(28,25,23,0.05);
+}
+.micro-group:last-child{border-bottom:none;padding-bottom:0}
+.micro-group-header{
+display:flex;align-items:baseline;gap:10px;
+margin-bottom:clamp(10px,1.2vw,16px);
+}
+.micro-group-header .micro-cat-name{
+font-size:13px;font-weight:700;letter-spacing:0.08em;
+text-transform:uppercase;color:var(--ink-secondary);
+white-space:nowrap;
+}
+.micro-group-header .micro-cat-desc{
+font-size:12px;color:var(--stone);font-weight:400;
+letter-spacing:0.02em;
+}
+.micro-group-header .micro-cat-line{
+flex:1;height:1px;
+background:linear-gradient(to right,var(--border),transparent 80%);
+}
+.micro-group-items{
+display:flex;flex-wrap:wrap;gap:6px;
+}
+.micro-cell{
+display:flex;flex-direction:column;align-items:center;justify-content:center;
+padding:14px 6px;border-radius:12px;cursor:pointer;
+background:transparent;
+border:1px solid transparent;
+transition:background .2s var(--ease-out),border-color .2s var(--ease-out),
+box-shadow .2s var(--ease-out),transform .25s var(--ease-out);
+flex:1 1 0;
+min-width:clamp(80px,9vw,100px);
+max-width:clamp(100px,11vw,130px);
+}
+.micro-cell:hover{
+background:var(--surface);
+border-color:var(--border);
+box-shadow:var(--shadow-xs);
+transform:translateY(-2px);
+}
+.micro-favicon{
+width:24px;height:24px;border-radius:5px;
+object-fit:contain;
+}
+.micro-name{
+font-size:10px;color:var(--muted);margin-top:7px;
+text-align:center;line-height:1.15;
+max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+font-weight:600;letter-spacing:0.02em;
+}
+.micro-cell:hover .micro-name{color:var(--ink-secondary)}
+
+/* ── CJK line-wrap fix ─────────────────────────────── */
+.line-wrap{overflow:hidden;padding-top:0.15em;margin-top:-0.15em}
+.line-inner{display:block}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+<div class="nav-tabs" id="navTabs">
+<div class="nav-indicator" id="navIndicator"></div>
+<button class="nav-btn active" data-page="page1">灵感聚合</button>
+<button class="nav-btn" data-page="page2">创造漏斗</button>
+</div>
+</nav>
+
+<div class="page active" id="page1">
+<div class="page-inner">
+<div class="p1-header">
+<div class="p1-kicker">Design Inspiration</div>
+<div class="p1-title line-wrap"><span class="line-inner">灵感<em>聚合</em></span></div>
+<div class="p1-subtitle">大牌设计平台一站直达，扫一眼就能找到今天想去的地方</div>
+</div>
+<div class="inspiration-grid" id="cardGrid"></div>
+</div>
+</div>
+
+<div class="page" id="page2">
+<div class="page2-wrap" id="page2Wrap">
+<div class="screen" id="macroScreen">
+<div class="screen-header">
+<div class="screen-label">色彩<span class="dot">.</span>风格</div>
+</div>
+<div class="macro-grid collapsed" id="macroGrid"></div>
+<button class="macro-expand-btn" id="macroExpandBtn" onclick="toggleMacroExpand()">
+<span class="macro-expand-btn-inner">
+<span class="expand-text">EXPAND</span>
+<span class="collapse-text">COLLAPSE</span>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</span>
+</button>
+</div>
+<div class="screen" id="microScreen">
+<div class="screen-header">
+<div class="screen-label">组件<span class="dot">.</span>工具</div>
+</div>
+<div class="micro-grid" id="microGrid"></div>
+</div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+/* ================================================================
+   DATA — Edit these arrays to add/remove sites
+   ================================================================ */
+
+const PAGE1_SITES = [
+  { name:"Dribbble", url:"https://dribbble.com",
+    gradient:"linear-gradient(145deg,#ea4c89 0%,#f082ac 40%,#ff6b9d 100%)",
+    desc:"设计师社区 · UI/视觉灵感聚集地", size:"hero" },
+  { name:"Behance", url:"https://behance.net",
+    gradient:"linear-gradient(145deg,#1769ff 0%,#4d9aff 50%,#0052cc 100%)",
+    desc:"Adobe 旗下 · 全品类设计作品展示", size:"wide" },
+  { name:"Awwwards", url:"https://awwwards.com",
+    gradient:"linear-gradient(145deg,#1a1a1a 0%,#333 50%,#555 100%)",
+    desc:"网页设计奥斯卡 · 最佳网站评选", size:"tall" },
+  { name:"Pinterest", url:"https://pinterest.com",
+    gradient:"linear-gradient(145deg,#e60023 0%,#ff4757 50%,#c0392b 100%)",
+    desc:"视觉发现引擎 · 灵感瀑布流", size:"med" },
+  { name:"Mobbin", url:"https://mobbin.com",
+    gradient:"linear-gradient(145deg,#00c9ff 0%,#3a7bd5 50%,#0062cc 100%)",
+    desc:"移动端 UI 模式库", size:"med" },
+  { name:"Godly", url:"https://godly.website",
+    gradient:"linear-gradient(145deg,#f5af19 0%,#f12711 50%,#e65c00 100%)",
+    desc:"精选网页设计灵感 · 每日更新", size:"sm" },
+  { name:"Typewolf", url:"https://typewolf.com",
+    gradient:"linear-gradient(145deg,#2c3e50 0%,#3498db 60%,#2980b9 100%)",
+    desc:"字体搭配灵感", size:"sm" },
+  { name:"Muzli", url:"https://muz.li",
+    gradient:"linear-gradient(145deg,#667eea 0%,#764ba2 50%,#6B73FF 100%)",
+    desc:"Chrome 设计灵感插件", size:"sm" },
+  { name:"Httpster", url:"https://httpster.net",
+    gradient:"linear-gradient(145deg,#11998e 0%,#38ef7d 60%,#00b894 100%)",
+    desc:"创意网站灵感集", size:"tall" },
+  { name:"Land-book", url:"https://land-book.com",
+    gradient:"linear-gradient(145deg,#fc5c7d 0%,#6a82fb 50%,#FC466B 100%)",
+    desc:"落地页灵感 · 分类清晰", size:"med" },
+  { name:"Unsplash", url:"https://unsplash.com",
+    gradient:"linear-gradient(145deg,#111 0%,#222 50%,#333 100%)",
+    desc:"免费高清摄影图库 · 设计配图首选", size:"sm" },
+  { name:"Pexels", url:"https://pexels.com",
+    gradient:"linear-gradient(145deg,#05a081 0%,#0d8ce9 50%,#0a74da 100%)",
+    desc:"免费素材图库 · 视频+图片", size:"sm" },
+];
+
+const MACRO_SITES = [
+  /* ── 网格/纹理底 ── */
+  { name:"Soft Grid", url:"https://coolors.co",
+    gradient:"background:#f8fafc;background-image:linear-gradient(to right,rgba(0,0,0,0.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,0.06) 1px,transparent 1px);background-size:20px 20px;" },
+  { name:"Warm Dot Grid", url:"https://color.adobe.com",
+    gradient:"background:#faf8f5;background-image:radial-gradient(circle,rgba(0,0,0,0.07) 1px,transparent 1px);background-size:16px 16px;" },
+  { name:"Blue Grid", url:"https://colorhunt.co",
+    gradient:"background:#eef2f7;background-image:linear-gradient(rgba(0,0,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.04) 1px,transparent 1px);background-size:24px 24px;" },
+  { name:"Dark Grid", url:"https://realtimecolors.com",
+    gradient:"background:#0f172a;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:28px 28px;" },
+
+  /* ── 柔和暖调（日常可用）── */
+  { name:"Warm Cream", url:"https://mycolor.space",
+    gradient:"linear-gradient(135deg,#faf5ef 0%,#f0e6d6 50%,#e8dcc8 100%)" },
+  { name:"Soft Peach", url:"https://www.happyhues.co",
+    gradient:"linear-gradient(160deg,#fef2e8 0%,#fde8d0 50%,#fbd5b4 100%)" },
+  { name:"Blush", url:"https://coolors.co",
+    gradient:"linear-gradient(135deg,#fdf2f8 0%,#fce7f3 50%,#fbcfe8 100%)" },
+  { name:"Powder Blue", url:"https://color.adobe.com",
+    gradient:"linear-gradient(145deg,#f0f9ff 0%,#e0f2fe 50%,#bae6fd 100%)" },
+  { name:"Sage", url:"https://colorhunt.co",
+    gradient:"linear-gradient(160deg,#f0fdf4 0%,#dcfce7 50%,#bbf7d0 100%)" },
+  { name:"Warm Sand", url:"https://realtimecolors.com",
+    gradient:"linear-gradient(135deg,#f5e6d3 0%,#e8d5b7 50%,#d4c4a8 100%)" },
+
+  /* ── 中调深色（有层次但不压抑）── */
+  { name:"Navy Gradient", url:"https://mycolor.space",
+    gradient:"linear-gradient(145deg,#1e3a5f 0%,#2d5a87 50%,#1a365d 100%)" },
+  { name:"Deep Teal", url:"https://www.happyhues.co",
+    gradient:"linear-gradient(160deg,#0d6e6e 0%,#0a5858 50%,#083d3d 100%)" },
+  { name:"Warm Slate", url:"https://coolors.co",
+    gradient:"linear-gradient(135deg,#334155 0%,#475569 50%,#3f3f46 100%)" },
+  { name:"Purple Haze", url:"https://color.adobe.com",
+    gradient:"linear-gradient(135deg,#3b0764 0%,#581c87 50%,#3b0764 100%)" },
+  { name:"Violet Night", url:"https://colorhunt.co",
+    gradient:"linear-gradient(135deg,#1e1b4b 0%,#312e81 50%,#1e1b4b 100%)" },
+
+  /* ── 鲜艳点睛（35% 高饱和）── */
+  { name:"Electric Violet", url:"https://realtimecolors.com",
+    gradient:"linear-gradient(135deg,#7c3aed 0%,#a78bfa 50%,#6d28d9 100%)" },
+  { name:"Hot Coral", url:"https://mycolor.space",
+    gradient:"linear-gradient(145deg,#ff6b6b 0%,#ff8e8e 50%,#ee5a5a 100%)" },
+  { name:"Vivid Green", url:"https://www.happyhues.co",
+    gradient:"linear-gradient(135deg,#00c853 0%,#69f0ae 50%,#00a844 100%)" },
+  { name:"Ocean Blue", url:"https://coolors.co",
+    gradient:"linear-gradient(145deg,#2196f3 0%,#64b5f6 50%,#1976d2 100%)" },
+  { name:"Sunset Glow", url:"https://color.adobe.com",
+    gradient:"linear-gradient(135deg,#ff6a00 0%,#ffb347 50%,#ee5a24 100%)" },
+  { name:"Rose Gold", url:"https://colorhunt.co",
+    gradient:"linear-gradient(145deg,#e8a0bf 0%,#f0c9cf 50%,#d4849a 100%)" },
+  { name:"Neon Cyan", url:"https://realtimecolors.com",
+    gradient:"linear-gradient(135deg,#00e5ff 0%,#84ffff 50%,#00b8d4 100%)" },
+];
+
+const MICRO_GROUPS = [
+  {
+    label: "UI 组件库",
+    desc: "可复制可直接用的按钮、卡片、表单等",
+    items: [
+      { short:"shadcn/ui", url:"https://ui.shadcn.com", domain:"ui.shadcn.com" },
+      { short:"Uiverse", url:"https://uiverse.io", domain:"uiverse.io" },
+      { short:"Magic UI", url:"https://magicui.design", domain:"magicui.design" },
+      { short:"Aceternity", url:"https://ui.aceternity.com", domain:"ui.aceternity.com" },
+      { short:"DaisyUI", url:"https://daisyui.com", domain:"daisyui.com" },
+      { short:"Hyper UI", url:"https://hyperui.dev", domain:"hyperui.dev" },
+      { short:"Flowbite", url:"https://flowbite.com", domain:"flowbite.com" },
+      { short:"kibo-ui", url:"https://ibelick.com", domain:"ibelick.com" },
+    ]
+  },
+  {
+    label: "动画 · 微交互",
+    desc: "滚动动画、hover特效、Lottie/Rive/Spline 动效资源",
+    items: [
+      { short:"Lottie", url:"https://lottiefiles.com", domain:"lottiefiles.com" },
+      { short:"Rive", url:"https://rive.app", domain:"rive.app" },
+      { short:"Spline", url:"https://spline.design", domain:"spline.design" },
+      { short:"Animata", url:"https://animata.design", domain:"animata.design" },
+      { short:"Motion Primitives", url:"https://motion-primitives.com", domain:"motion-primitives.com" },
+      { short:"Hover.dev", url:"https://hover.dev", domain:"hover.dev" },
+    ]
+  },
+  {
+    label: "图标",
+    desc: "通用图标库，覆盖绝大多数设计场景",
+    items: [
+      { short:"Phosphor", url:"https://phosphoricons.com", domain:"phosphoricons.com" },
+    ]
+  },
+  {
+    label: "SVG · 渐变生成器",
+    desc: "背景图案、形状、渐变色一键生成可导出",
+    items: [
+      { short:"Fffuel", url:"https://fffuel.co", domain:"fffuel.co" },
+      { short:"uigradients", url:"https://uigradients.com", domain:"uigradients.com" },
+    ]
+  },
+  {
+    label: "WebGL · Shader · 3D",
+    desc: "Shader背景、3D粒子、WebGL视觉特效",
+    items: [
+      { short:"Radiant Shaders", url:"https://radiant-shaders.com", domain:"radiant-shaders.com" },
+      { short:"Shader Gradient", url:"https://shadergradient.co", domain:"shadergradient.co" },
+      { short:"Three.js", url:"https://threejs.org", domain:"threejs.org" },
+    ]
+  },
+];
+
+const FALLBACK_SVG = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d6d3d1" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="3"/></svg>';
+
+/* ================================================================
+   RENDER
+   ================================================================ */
+
+function renderPage1() {
+  const sizeMap = { hero:'card-hero', wide:'card-wide', tall:'card-tall', med:'card-med', sm:'card-sm' };
+  document.getElementById('cardGrid').innerHTML = PAGE1_SITES.map(s => `
+    <a href="${s.url}" target="_blank" rel="noopener" class="insp-card ${sizeMap[s.size] || 'card-med'}"
+       title="${s.name}">
+      <div class="insp-card-inner" style="background:${s.gradient}"></div>
+      <div class="insp-card-content">
+        <div class="insp-card-name">${s.name}</div>
+        <div class="insp-card-desc">${s.desc}</div>
+      </div>
+      <div class="insp-card-arrow">
+        <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+      </div>
+    </a>
+  `).join('');
+}
+
+function getCardStyle(gradient) {
+  // Grid/textured patterns already include full CSS properties
+  if (gradient.includes('background:')) return gradient;
+  // Simple gradients
+  return `background:${gradient};`;
+}
+
+function renderMacroScreen() {
+  document.getElementById('macroGrid').innerHTML = MACRO_SITES.map((s, i) => `
+    <div class="macro-card" title="${s.name}" data-index="${i}">
+      <a href="${s.url}" target="_blank" rel="noopener" class="card-surface" style="${getCardStyle(s.gradient)}"></a>
+      <button class="get-code-btn" data-idx="${i}" onclick="copyMacroCode(event, ${i})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+        </svg>
+        Get Code
+      </button>
+    </div>
+  `).join('');
+}
+
+function copyMacroCode(e, idx) {
+  e.preventDefault();
+  e.stopPropagation();
+  const s = MACRO_SITES[idx];
+  let code;
+  if (s.gradient.includes('background:')) {
+    // Grid/textured patterns — copy the full CSS block
+    code = s.gradient.replace(/;(\s*background-image)/g, ';\n$1').replace(/;(\s*background-size)/g, ';\n$1');
+  } else {
+    code = `background: ${s.gradient};`;
+  }
+  navigator.clipboard.writeText(code).then(() => {
+    showToast(`Copied "${s.name}"`);
+  });
+}
+
+function toggleMacroExpand() {
+  const grid = document.getElementById('macroGrid');
+  grid.classList.toggle('collapsed');
+  grid.classList.toggle('expanded');
+}
+
+function showToast(msg) {
+  let toast = document.querySelector('.copy-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'copy-toast';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    ${msg}
+  `;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), 1600);
+}
+
+function renderMicroScreen() {
+  const html = MICRO_GROUPS.map(g => {
+    const cells = g.items.map(s => `
+      <a href="${s.url}" target="_blank" rel="noopener" class="micro-cell" title="${s.short}">
+        <img class="micro-favicon"
+             src="https://www.google.com/s2/favicons?domain=${s.domain}&sz=64"
+             alt="${s.short}"
+             onerror="this.style.display='none';this.insertAdjacentHTML('afterend','${FALLBACK_SVG.replace(/'/g,"\\'")}')">
+        <span class="micro-name">${s.short}</span>
+      </a>
+    `).join('');
+    return `
+      <div class="micro-group">
+        <div class="micro-group-header">
+          <span class="micro-cat-name">${g.label}</span>
+          <span class="micro-cat-desc">${g.desc}</span>
+          <div class="micro-cat-line"></div>
+        </div>
+        <div class="micro-group-items">${cells}</div>
+      </div>`;
+  }).join('');
+  document.getElementById('microGrid').innerHTML = html;
+}
+
+/* ================================================================
+   NAVIGATION
+   ================================================================ */
+
+let currentPage = 'page1';
+const navBtns = document.querySelectorAll('.nav-btn');
+const indicator = document.getElementById('navIndicator');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function updateIndicator(immediate) {
+  const btn = document.querySelector('.nav-btn.active');
+  if (!btn) return;
+  if (immediate) {
+    indicator.style.transition = 'none';
+    indicator.style.width = btn.offsetWidth + 'px';
+    indicator.style.transform = `translateX(${btn.offsetLeft - 4}px)`;
+    requestAnimationFrame(() => indicator.style.transition = '');
+  } else {
+    indicator.style.width = btn.offsetWidth + 'px';
+    indicator.style.transform = `translateX(${btn.offsetLeft - 4}px)`;
+  }
+}
+
+function switchPage(pageId) {
+  if (pageId === currentPage) return;
+  currentPage = pageId;
+  navBtns.forEach(b => b.classList.toggle('active', b.dataset.page === pageId));
+  updateIndicator();
+
+  const oldPage = document.querySelector('.page.active');
+  const newPage = document.getElementById(pageId);
+  const dur = prefersReducedMotion ? 0 : 0.25;
+
+  gsap.to(oldPage, {
+    opacity: 0, duration: dur, ease: 'power2.in',
+    onComplete() {
+      oldPage.classList.remove('active');
+      oldPage.style.display = 'none';
+      newPage.style.display = 'block';
+      newPage.classList.add('active');
+      gsap.fromTo(newPage, { opacity: 0 }, { opacity: 1, duration: prefersReducedMotion ? 0 : 0.35, ease: 'power2.out' });
+
+      if (pageId === 'page1') {
+        animateEntrance('#cardGrid', '.insp-card');
+      }
+    }
+  });
+}
+
+navBtns.forEach(btn => btn.addEventListener('click', () => switchPage(btn.dataset.page)));
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+
+gsap.registerPlugin(ScrollTrigger);
+
+function animateEntrance(container, items) {
+  if (prefersReducedMotion) return;
+  gsap.from(items || `${container} > *`, {
+    y: 24, opacity: 0, duration: 0.7, ease: 'expo.out', stagger: 0.06,
+  });
+}
+
+function animateLineReveal(selector) {
+  if (prefersReducedMotion) return;
+  document.querySelectorAll(selector).forEach(el => {
+    gsap.from(el.querySelectorAll('.line-inner'), {
+      y: '112%', duration: 0.7, ease: 'expo.out', stagger: 0.05,
+      scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+    });
+  });
+}
+
+/* ================================================================
+   INIT
+   ================================================================ */
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderPage1();
+  renderMacroScreen();
+  renderMicroScreen();
+
+  setTimeout(() => {
+    animateEntrance('#cardGrid', '.insp-card');
+    animateLineReveal('.line-wrap');
+  }, 60);
+
+  updateIndicator(true);
+  window.addEventListener('resize', () => updateIndicator());
+});
+</script>
+</body>
+</html>
