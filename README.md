@@ -1,44 +1,44 @@
-# Designer Nav — UI/UX 设计师灵感导航站
+# Designer Nav
 
-![Designer Nav 预览](preview.png)
+**页面一 · 灵感聚合**
 
-一个专为 UI/UX 设计师打造的高效视觉导航静态网页，零依赖、单文件、即开即用。
+![页面一](preview-page1.png)
 
-## 功能
+**页面二 · 色彩·风格**
 
-### 页面一 · 灵感聚合
+![页面二](preview-page2.png)
 
-大牌设计灵感集合站的聚合器，全屏卡片矩阵布局：
+**页面二 · 组件·工具**
 
-- 大尺寸视觉招牌卡片，hover 放大 + 阴影动效
-- 支持站内搜索、分类筛选
-- 每张卡片展示 Favicon + 站点描述
+![页面三](preview-page3.png)
 
-### 页面二 · 创造漏斗
+---
 
-两个屏幕层级，丝滑滚动过渡：
+为 UI 设计师打造的工作灵感导航 —— 把日常工作需要的视觉灵感和工具站点聚合成一个可视化入口，打开即用。
 
-- **色彩 · 风格** — 配色/风格网站聚合，大面积渐变色块，一键 Get Code 复制 CSS 到剪贴板，支持收起/展开
-- **组件 · 工具** — 高密度微型网格，按「UI 组件库 / 动画微交互 / 图标 / SVG 生成 / WebGL Shader」分类，每格仅 Favicon + 短名称
+## 页面一 · 灵感聚合
+
+收录 13 个设计灵感站点，卡片矩阵布局，点击直达：
+
+**Dribbble** · **Awwwards** · **Pinterest** · **Mobbin** · **Godly** · **Typewolf** · **Httpster** · **Land-book** · **Unsplash** · **Pexels** · **SaaS Landing Page** · **Page Flows** · **Fonts In Use**
+
+## 页面二 · 创造漏斗
+
+上半部分是配色灵感区，展示多种渐变色块，点击即可复制 CSS 代码直接用到项目里。下半部分按类别整理了常用工具站点：
+
+- **UI 组件库** — shadcn/ui、Uiverse、Magic UI、Aceternity、DaisyUI、Hyper UI、Flowbite、kibo-ui
+- **动画 · 微交互** — Lottie、Rive、Spline、Animata、Motion Primitives、Hover.dev
+- **图标** — Phosphor
+- **SVG · 渐变生成器** — Fffuel、uigradients
+- **WebGL · Shader · 3D** — Radiant Shaders、Shader Gradient、Three.js
 
 ## 技术栈
 
-- 纯 HTML + CSS + Vanilla JS，无任何框架依赖
-- GSAP 入场动画 + ScrollTrigger
-- 系统字体，无需外部加载
-- 文件大小 < 35KB
+纯 HTML + CSS + Vanilla JS，无框架依赖，单文件 < 35KB。
 
-## 使用方式
+## 使用
 
-直接在浏览器中打开 `index.html` 即可。
-
-## 自定义
-
-编辑文件顶部的 JS 数组即可增删网站：
-
-- `PAGE1_SITES` — 大牌灵感站
-- `MACRO_SITES` — 配色/风格站（支持自定义 gradient CSS）
-- `MICRO_SITES` — 组件/工具站（按分组分类）
+浏览器直接打开 `index.html`。
 
 ## License
 
