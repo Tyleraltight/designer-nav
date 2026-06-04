@@ -1,6 +1,6 @@
 # Designer Nav — UI/UX 设计师灵感导航站
 
-![Designer Nav 预览](https://api.microlink.io/?url=https://tyleraltight.github.io/designer-nav/&screenshot=true&meta=false&embed=screenshot.url)
+![Designer Nav 预览](preview.png)
 
 一个专为 UI/UX 设计师打造的高效视觉导航静态网页，零依赖、单文件、即开即用。
 
