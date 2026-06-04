@@ -115,9 +115,9 @@ border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;
 transition:transform .5s var(--ease-out),box-shadow .5s var(--ease-out);
 }
 .insp-card::after{
-content:'';position:absolute;inset:0;z-index:1;
+content:'';position:absolute;inset:0;z-index:3;
 border-radius:var(--radius-lg);
-background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.25) 35%,rgba(0,0,0,0.04) 55%,transparent 100%);
+background:linear-gradient(to top,rgba(0,0,0,0.78) 0%,rgba(0,0,0,0.38) 40%,rgba(0,0,0,0.08) 60%,transparent 100%);
 pointer-events:none;
 }
 .insp-card:hover{
@@ -125,22 +125,28 @@ transform:translateY(-5px);
 box-shadow:var(--shadow-xl);
 z-index:2;
 }
-.insp-card-inner{position:absolute;inset:0;transition:transform .7s var(--ease-out)}
+.insp-card-inner{position:absolute;inset:0;z-index:0;transition:transform .7s var(--ease-out)}
 .insp-card:hover .insp-card-inner{transform:scale(1.05)}
-.insp-card-content{position:relative;z-index:2;padding:clamp(16px,2vw,28px)}
+.insp-card-img{
+position:absolute;inset:0;z-index:1;
+width:100%;height:100%;object-fit:cover;
+transition:transform .7s var(--ease-out),opacity .4s;
+}
+.insp-card:hover .insp-card-img{transform:scale(1.05)}
+.insp-card-content{position:relative;z-index:4;padding:clamp(16px,2vw,28px)}
 .insp-card-name{
-font-family:var(--font-display);font-weight:500;
-font-size:clamp(0.95rem,1.5vw,1.35rem);line-height:1.2;
-letter-spacing:-0.01em;
-text-shadow:0 1px 4px rgba(0,0,0,0.5),0 2px 12px rgba(0,0,0,0.3);
+font-family:var(--font-display);font-weight:600;
+font-size:clamp(1.05rem,1.8vw,1.55rem);line-height:1.2;
+letter-spacing:-0.01em;color:#ede4d4;
+text-shadow:0 1px 3px rgba(0,0,0,0.45),0 2px 8px rgba(0,0,0,0.28),0 4px 20px rgba(0,0,0,0.15);
 }
 .insp-card-desc{
-font-size:0.75rem;color:rgba(255,255,255,0.82);margin-top:4px;
+font-size:0.78rem;color:rgba(237,228,212,0.82);margin-top:6px;
 font-weight:400;letter-spacing:0.015em;line-height:1.4;
-text-shadow:0 1px 4px rgba(0,0,0,0.4);
+text-shadow:0 1px 3px rgba(0,0,0,0.5),0 2px 8px rgba(0,0,0,0.3);
 }
 .insp-card-arrow{
-position:absolute;top:16px;right:16px;z-index:2;
+position:absolute;top:16px;right:16px;z-index:4;
 width:32px;height:32px;border-radius:50%;
 background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);
 display:flex;align-items:center;justify-content:center;
@@ -150,20 +156,23 @@ transition:opacity .3s var(--ease-out),transform .3s var(--ease-out);
 .insp-card:hover .insp-card-arrow{opacity:1;transform:translate(0,0)}
 .insp-card-arrow svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2}
 
-/* Card sizes — varied, not identical */
-.card-hero{grid-column:span 7;min-height:clamp(260px,32vw,380px)}
-.card-wide{grid-column:span 5;min-height:clamp(260px,32vw,380px)}
-.card-tall{grid-column:span 4;min-height:clamp(280px,28vw,360px)}
-.card-med{grid-column:span 4;min-height:clamp(200px,20vw,260px)}
-.card-sm{grid-column:span 4;min-height:clamp(180px,16vw,220px)}
+/* Card sizes — each row sums to 12, varied heights for visual rhythm */
+.card-hero{grid-column:span 7;min-height:clamp(300px,36vw,420px)}
+.card-wide{grid-column:span 5;min-height:clamp(260px,28vw,340px)}
+.card-tall{grid-column:span 4;min-height:clamp(300px,32vw,400px)}
+.card-med{grid-column:span 4;min-height:clamp(220px,22vw,280px)}
+.card-sm{grid-column:span 4;min-height:clamp(180px,18vw,240px)}
 
 @media(max-width:900px){
-.inspiration-grid{grid-template-columns:repeat(6,1fr)}
-.card-hero,.card-wide,.card-tall,.card-med,.card-sm{grid-column:span 6;min-height:220px}
+.inspiration-grid{grid-template-columns:repeat(2,1fr)}
+.card-hero,.card-wide,.card-tall,.card-med,.card-sm{grid-column:span 1}
+.card-hero{min-height:280px}.card-wide{min-height:240px}
+.card-tall{min-height:260px}.card-med{min-height:200px}.card-sm{min-height:170px}
 }
 @media(max-width:480px){
 .inspiration-grid{grid-template-columns:1fr}
-.card-hero,.card-wide,.card-tall,.card-med,.card-sm{grid-column:span 1;min-height:200px}
+.card-hero{min-height:260px}.card-wide{min-height:220px}
+.card-tall{min-height:240px}.card-med{min-height:180px}.card-sm{min-height:160px}
 }
 
 /* ── Page 2: Creative Funnel ───────────────────────── */
@@ -427,41 +436,57 @@ font-weight:600;letter-spacing:0.02em;
 
 const PAGE1_SITES = [
   { name:"Dribbble", url:"https://dribbble.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Fdribbble.com%2Fshots%2Fpopular&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
     gradient:"linear-gradient(145deg,#ea4c89 0%,#f082ac 40%,#ff6b9d 100%)",
     desc:"设计师社区 · UI/视觉灵感聚集地", size:"hero" },
-  { name:"Behance", url:"https://behance.net",
-    gradient:"linear-gradient(145deg,#1769ff 0%,#4d9aff 50%,#0052cc 100%)",
-    desc:"Adobe 旗下 · 全品类设计作品展示", size:"wide" },
   { name:"Awwwards", url:"https://awwwards.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Fawwwards.com%2Fwebsites%2Fsites_of_the_day%2F&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
     gradient:"linear-gradient(145deg,#1a1a1a 0%,#333 50%,#555 100%)",
-    desc:"网页设计奥斯卡 · 最佳网站评选", size:"tall" },
+    desc:"网页设计奥斯卡 · 最佳网站评选", size:"wide" },
   { name:"Pinterest", url:"https://pinterest.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Fpinterest.com%2Ftoday%2F&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
     gradient:"linear-gradient(145deg,#e60023 0%,#ff4757 50%,#c0392b 100%)",
     desc:"视觉发现引擎 · 灵感瀑布流", size:"med" },
   { name:"Mobbin", url:"https://mobbin.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Fmobbin.com%2Fexplore&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
     gradient:"linear-gradient(145deg,#00c9ff 0%,#3a7bd5 50%,#0062cc 100%)",
     desc:"移动端 UI 模式库", size:"med" },
   { name:"Godly", url:"https://godly.website",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Fgodly.website&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
     gradient:"linear-gradient(145deg,#f5af19 0%,#f12711 50%,#e65c00 100%)",
-    desc:"精选网页设计灵感 · 每日更新", size:"sm" },
+    desc:"精选网页设计灵感 · 每日更新", size:"tall" },
   { name:"Typewolf", url:"https://typewolf.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Ftypewolf.com%2Fsite-of-the-day&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
     gradient:"linear-gradient(145deg,#2c3e50 0%,#3498db 60%,#2980b9 100%)",
     desc:"字体搭配灵感", size:"sm" },
-  { name:"Muzli", url:"https://muz.li",
-    gradient:"linear-gradient(145deg,#667eea 0%,#764ba2 50%,#6B73FF 100%)",
-    desc:"Chrome 设计灵感插件", size:"sm" },
   { name:"Httpster", url:"https://httpster.net",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Fhttpster.net%2Fstyle%2Fphotographic%2F&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
     gradient:"linear-gradient(145deg,#11998e 0%,#38ef7d 60%,#00b894 100%)",
     desc:"创意网站灵感集", size:"tall" },
   { name:"Land-book", url:"https://land-book.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Fland-book.com%2Fdesign%2Flanding-page&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
     gradient:"linear-gradient(145deg,#fc5c7d 0%,#6a82fb 50%,#FC466B 100%)",
     desc:"落地页灵感 · 分类清晰", size:"med" },
   { name:"Unsplash", url:"https://unsplash.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Funsplash.com%2Ft%2Fnature&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
     gradient:"linear-gradient(145deg,#111 0%,#222 50%,#333 100%)",
     desc:"免费高清摄影图库 · 设计配图首选", size:"sm" },
   { name:"Pexels", url:"https://pexels.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Fpexels.com%2Fdiscover%2F&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
     gradient:"linear-gradient(145deg,#05a081 0%,#0d8ce9 50%,#0a74da 100%)",
     desc:"免费素材图库 · 视频+图片", size:"sm" },
+  { name:"SaaS Landing Page", url:"https://saaslandingpage.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Fsaaslandingpage.com&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
+    gradient:"linear-gradient(145deg,#6366f1 0%,#8b5cf6 50%,#a78bfa 100%)",
+    desc:"SaaS 落地页精选 · 产品页灵感", size:"sm" },
+  { name:"Page Flows", url:"https://pageflows.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Fweb.archive.org%2Fweb%2F2024%2Fhttps%3A%2F%2Fpageflows.com%2F&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=5000",
+    gradient:"linear-gradient(145deg,#0ea5e9 0%,#38bdf8 50%,#7dd3fc 100%)",
+    desc:"用户流程录屏 · 交互参考", size:"sm" },
+  { name:"Fonts In Use", url:"https://fontsinuse.com",
+    img:"https://api.microlink.io/?url=https%3A%2F%2Ffontsinuse.com%2F%3Ffilters%3Dstaff-picks-only&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=800&waitForTimeout=3000",
+    gradient:"linear-gradient(145deg,#475569 0%,#64748b 50%,#94a3b8 100%)",
+    desc:"真实项目字体应用 · 排版参考", size:"med" },
 ];
 
 const MACRO_SITES = [
@@ -583,6 +608,7 @@ function renderPage1() {
     <a href="${s.url}" target="_blank" rel="noopener" class="insp-card ${sizeMap[s.size] || 'card-med'}"
        title="${s.name}">
       <div class="insp-card-inner" style="background:${s.gradient}"></div>
+      ${s.img ? `<img class="insp-card-img" src="${s.img}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">` : ''}
       <div class="insp-card-content">
         <div class="insp-card-name">${s.name}</div>
         <div class="insp-card-desc">${s.desc}</div>
